@@ -2,7 +2,7 @@
 
 # Start with backbone
 
-Define the Purpose of Your Backbone
+Purpose of Your Backbone
 
 **Edges → early layers**
 
