@@ -33,7 +33,7 @@ Your custom backbone is a Convolutional Neural Network (CNN) composed of:
 
 **Multi-scale outputs — for detecting small, medium, and large colonies**
 
-## STEP 1: CONVOLUTIONAL BLOCK
+## CONVOLUTIONAL BLOCK
 
 Conv2D extracts spatial patterns (edges, blobs, shapes).
 
@@ -41,7 +41,7 @@ BatchNorm normalizes the output for stable training.
 
 ReLU introduces non-linearity (helps model learn complex features).
 
-## STEP 2: RESIDUAL BLOCK .
+## RESIDUAL BLOCK .
 
 ### A Residual Block allows the network to skip some layers and add the input directly to the output.
 
@@ -53,11 +53,11 @@ Improve training stability
 
 Allow deeper networks to learn effectively
 
-## STEP 3: BACKBONE STRUCTURE (Layer by Layer)
+## BACKBONE STRUCTURE (Layer by Layer)
 
-### You built the MyBackbone class using the ConvBlock and ResidualBlock.
+### You built the Backbone class using the ConvBlock and ResidualBlock.
 
-## STEP 4: FEATURE MAPS AND SIZES
+## FEATURE MAPS AND SIZES
 
 | Stage | Layer             | Output Size | Channels | Purpose          |
 | ----- | ----------------- | ----------- | -------- | ---------------- |
@@ -67,7 +67,7 @@ Allow deeper networks to learn effectively
 | 4     | Conv + 2×Residual | 40×40       | 256      | Medium colonies  |
 | 5     | Conv + 2×Residual | 20×20       | 512      | Large colonies   |
 
-## STEP 5: TESTING THE BACKBONE
+## TESTING THE BACKBONE
 
 You tested your backbone with a sample tensor:
 
