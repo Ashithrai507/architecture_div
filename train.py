@@ -35,7 +35,7 @@ def train_model():
     print("🔍 Checking dataset folders...")
     for folder in ["train/images", "train/labels", "val/images", "val/labels"]:
         if not os.path.exists(folder):
-            raise FileNotFoundError(f"❌ Missing folder: {folder}")
+            raise FileNotFoundError(f"Missing folder: {folder}")
 
   
     train_dataset = BacteriaDataset("train/images/", "train/labels/")
