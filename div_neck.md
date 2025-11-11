@@ -90,3 +90,25 @@ p5: torch.Size([1, 512, 20, 20])
 | `p3`   | 80×80            | 128      | Small colonies  |
 | `p4`   | 40×40            | 256      | Medium colonies |
 | `p5`   | 20×20            | 512      | Large colonies  |
+
+### What Happens to an Image Here
+
+| Stage                   | Feature Map Example | What’s Happening                                   |
+| ----------------------- | ------------------- | -------------------------------------------------- |
+| From Backbone           | P3, P4, P5          | The image is represented as abstract feature maps  |
+| 1×1 Convs               | Channel reduction   | Keeps important data, reduces redundancy           |
+| Upsample P5             | 20×20 → 40×40       | Aligns with medium scale features                  |
+| Concatenate P5+P4       | 512 channels        | Combines large + medium colony info                |
+| Upsample + concat again | 80×80               | Adds small colony details                          |
+| Conv layers             | Refinement          | Sharpens colony features, removes background noise |
+| Output                  | F3, F4, F5          | Clean, multi-scale features ready for detection    |
+
+| Layer Type       | Input              | Output                | Purpose                |
+| ---------------- | ------------------ | --------------------- | ---------------------- |
+| 1×1 Conv         | P3, P4, P5         | Reduce channels       | Align depth            |
+| Upsample         | P5 → P4, P4 → P3   | Match resolutions     | Combine scales         |
+| Concat           | Stack feature maps | Fuse detail + context |                        |
+| ConvBlocks       | 3×3 Convs          | Refine and filter     | Remove noise           |
+| Downsample (PAN) | F3 → F4 → F5       | Bottom-up path        | Pass small info upward |
+| Output           | F3, F4, F5         | 80×80, 40×40, 20×20   | To detection head      |
+
