@@ -12,6 +12,15 @@ check out the neck.md for more information what it actually does or actually hap
 
 check out the head.md for more information what it actually does or actually happens in it.
 
+### Summary
+
+| Stage    | Meaning                                         |
+| -------- | ----------------------------------------------- |
+| Backbone | Extracts **features**                           |
+| Neck     | **Combines** and **refines** them across scales |
+| Head     | **Predicts** boxes and confidences              |
+
+
 #### after this create a new file called model.py
 **Where we add those there parts into one**
 **Then proceed with training**
