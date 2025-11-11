@@ -3,9 +3,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-# ======================================
-# 🔹 Basic Convolutional Block
-# ======================================
+
+#Basic Convolutional Block
 class ConvBlock(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size=3, stride=1, padding=1):
         super().__init__()
@@ -17,9 +16,9 @@ class ConvBlock(nn.Module):
         return self.relu(self.bn(self.conv(x)))
 
 
-# ======================================
-# 🔹 Residual Block
-# ======================================
+
+#Residual Block
+
 class ResidualBlock(nn.Module):
     def __init__(self, channels):
         super().__init__()
@@ -30,9 +29,9 @@ class ResidualBlock(nn.Module):
         return x + self.layer2(self.layer1(x))
 
 
-# ======================================
-# 🔹 Backbone (Feature Extractor)
-# ======================================
+
+#Backbone (Feature Extractor)#
+
 class MyBackbone(nn.Module):
     def __init__(self):
         super().__init__()
@@ -48,12 +47,12 @@ class MyBackbone(nn.Module):
         x3 = self.layer3(x2)
         x4 = self.layer4(x3)
         x5 = self.layer5(x4)
-        return x3, x4, x5  # multi-scale feature maps
+        return x3, x4, x5 
 
 
-# ======================================
-# 🔹 Neck (Feature Pyramid Network)
-# ======================================
+
+#Neck (Feature Pyramid Network)
+
 class FPNNeck(nn.Module):
     def __init__(self, channels=[128, 256, 512]):
         super().__init__()
@@ -61,7 +60,6 @@ class FPNNeck(nn.Module):
         self.reduce_c4 = nn.Conv2d(channels[1], 256, 1)
         self.reduce_c5 = nn.Conv2d(channels[2], 512, 1)
 
-        # After concatenation
         self.conv_c4 = ConvBlock(512 + 256, 256)
         self.conv_c3 = ConvBlock(256 + 128, 128)
 
@@ -81,9 +79,9 @@ class FPNNeck(nn.Module):
         return p3, p4, c5
 
 
-# ======================================
-# 🔹 Detection Head
-# ======================================
+
+#Detection Head
+
 class DetectionHead(nn.Module):
     def __init__(self, num_classes=1, anchors_per_scale=3):
         super().__init__()
@@ -99,9 +97,8 @@ class DetectionHead(nn.Module):
         return [out_small, out_medium, out_large]
 
 
-# ======================================
-# 🔹 Full Bacteria Detector Model
-# ======================================
+#Full Bacteria Detector Model#
+
 class BacteriaDetector(nn.Module):
     def __init__(self, num_classes=1):
         super().__init__()
@@ -116,9 +113,9 @@ class BacteriaDetector(nn.Module):
         return preds
 
 
-# ======================================
-# 🔹 Loss Function (CIoU + BCE)
-# ======================================
+
+#Loss Function (CIoU + BCE)
+
 def detection_loss(preds, targets, anchors, device, lambda_box=5.0, lambda_obj=1.0, lambda_cls=1.0):
     """
     Custom loss function combining CIoU + BCE for object detection.
