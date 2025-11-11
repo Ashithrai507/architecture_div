@@ -4,11 +4,40 @@
 
 ## The Neck helps the model understand both fine details (small colonies) and global context (large colonies).
 
+### What the Neck Does
+
+The neck combines and enhances these maps using two major ideas:
+
+#### Feature Pyramid Network (FPN)
+→ Combines low-level (detailed) and high-level (contextual) features.
+
+#### Path Aggregation Network (PAN)
+→ Strengthens information flow bottom-up (from small to large features).
+
+### The layer flow in simplified way
+``` scss
+             Backbone Output
+     ┌────────────┬────────────┬────────────┐
+     │     P3     │     P4     │     P5     │
+     │(80×80×128) │(40×40×256) │(20×20×512) │
+     └─────┬──────┴─────┬──────┴─────┬──────┘
+           │              │              │
+           ▼              ▼              ▼
+    1x1 Convs → Reduce Channels → Upsample → Merge
+           │              │              │
+           ▼              ▼              ▼
+     Fused Feature Maps (multi-scale)
+           │
+           ▼
+   Output → [small, medium, large feature maps]
+
+```
+
 **Takes multiple scales of features from the backbone (small, medium, large)**
 
 **Merges them in a way that each output layer gets context from all scales**
 
-## STEP 2: Why You Need a Neck
+##  Why You Need a Neck
 
 Without the Neck:
 
