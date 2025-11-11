@@ -1,6 +1,4 @@
-# ============================================================
-# 🚀 Bacteria Detection Model — Training Script (with Validation & Early Stopping)
-# ============================================================
+
 
 import os
 import torch
@@ -8,14 +6,14 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 from multiprocessing import freeze_support
 
-# 🧩 Import your custom modules
+
 from model import BacteriaDetector, detection_loss
 from dataset import BacteriaDataset
 from utils import *
 
-# ============================================================
-# 🔹 Custom collate function (handles variable number of boxes)
-# ============================================================
+
+#Custom collate function (handles variable number of boxes)
+
 def collate_fn(batch):
     images = []
     targets = []
@@ -25,28 +23,27 @@ def collate_fn(batch):
     images = torch.stack(images, dim=0)
     return images, targets
 
-# ============================================================
-# 🔹 Main Training Function
-# ============================================================
+#Main Training Function
+
 def train_model():
 
-    # --- Device Setup ---
+
     device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
     print(f"✅ Using device: {device}")
 
-    # --- Dataset Check ---
+    
     print("🔍 Checking dataset folders...")
     for folder in ["train/images", "train/labels", "val/images", "val/labels"]:
         if not os.path.exists(folder):
             raise FileNotFoundError(f"❌ Missing folder: {folder}")
 
-    # --- Load Datasets ---
+  
     train_dataset = BacteriaDataset("train/images/", "train/labels/")
     val_dataset = BacteriaDataset("val/images/", "val/labels/")
     print(f"✅ Training samples: {len(train_dataset)}")
     print(f"✅ Validation samples: {len(val_dataset)}")
 
-    # --- DataLoaders ---
+   
     train_loader = DataLoader(
         train_dataset, batch_size=4, shuffle=True, num_workers=0, collate_fn=collate_fn
     )
@@ -54,32 +51,32 @@ def train_model():
         val_dataset, batch_size=4, shuffle=False, num_workers=0, collate_fn=collate_fn
     )
 
-    # --- Model, Optimizer ---
+    
     model = BacteriaDetector(num_classes=1).to(device)
     optimizer = optim.AdamW(model.parameters(), lr=1e-4)
 
-    # --- YOLO-style Anchors ---
+   
     anchors = [
         [(10,13), (16,30), (33,23)],
         [(30,61), (62,45), (59,119)],
         [(116,90), (156,198), (373,326)]
     ]
 
-    num_epochs = 50  # 👈 You can change this as needed
-    patience_limit = 5  # stop if val loss doesn’t improve for 5 epochs
+    num_epochs = 50 
+    patience_limit = 5 
     print("🚀 Starting training...\n")
 
     best_val_loss = float("inf")
     patience_counter = 0
 
-    # ============================================================
-    # 🔹 Training Loop with Validation + Early Stopping
-    # ============================================================
+ 
+    # Training Loop with Validation + Early Stopping
+    
     for epoch in range(num_epochs):
         model.train()
         total_loss = 0.0
 
-        # --- Training Phase ---
+        
         for batch_idx, (images, targets) in enumerate(train_loader):
             try:
                 images = images.to(device)
@@ -97,14 +94,13 @@ def train_model():
 
             except Exception as e:
                 print(f"⚠️ Error in batch {batch_idx}: {e}")
-                continue  # skip problematic batch safely
-
+                continue 
         avg_train_loss = total_loss / max(1, len(train_loader))
         print(f"✅ Epoch [{epoch+1}/{num_epochs}] | Avg Train Loss: {avg_train_loss:.4f}")
 
-        # ============================================================
-        # 🔹 Validation Phase
-        # ============================================================
+       
+        #Validation Phase
+        
         model.eval()
         val_loss = 0.0
         with torch.no_grad():
@@ -117,9 +113,8 @@ def train_model():
         val_loss /= max(1, len(val_loader))
         print(f"📊 Validation Loss after Epoch [{epoch+1}]: {val_loss:.4f}")
 
-        # ============================================================
-        # 🔹 Early Stopping Logic
-        # ============================================================
+        #Early Stopping Logic
+        
         if val_loss < best_val_loss:
             print(f"💾 Validation improved from {best_val_loss:.4f} → {val_loss:.4f}, saving best model...")
             best_val_loss = val_loss
@@ -138,9 +133,9 @@ def train_model():
 
     print("\n🎉 Training complete! Best model saved as 'weights/best_model.pth'")
 
-# ============================================================
-# 🔹 Entry Point (for macOS/Windows multiprocessing safety)
-# ============================================================
+
+#Entry Point (for macOS/Windows multiprocessing safety)
+
 if __name__ == "__main__":
     freeze_support()
     train_model()
